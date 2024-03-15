@@ -1,0 +1,14 @@
+#!/bin/bash
+
+echo "Enter a letter:"
+read letter
+
+letter=$(echo "$letter" | tr '[:upper:]' '[:lower:]')
+
+if [[ "$letter" == [aeiou] ]]; then
+    echo "$letter is a vowel."
+elif [[ "$letter" == [a-z] ]]; then
+    echo "$letter is a consonant."
+else
+    echo "Invalid input. Please enter a single letter."
+fi
