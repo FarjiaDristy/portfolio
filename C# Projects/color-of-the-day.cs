@@ -6,19 +6,17 @@ namespace Practice3tWeekDayWithColors
         static void Main(string[] args)
         {
             Console.WriteLine("What year it is?");
-            int year = int.Parse(Console.ReadLine()); // or var year = Console.ReadLine();
-
+            int year = int.Parse(Console.ReadLine()); 
             Console.WriteLine("What month it is?");
             int month = int.Parse(Console.ReadLine());
 
             Console.WriteLine("What day it is?");
             int day = int.Parse(Console.ReadLine());
 
-            DateTime weekDay = new DateTime(year, month, day); // 
+            DateTime weekDay = new DateTime(year, month, day); 
             Console.WriteLine("Today is : " + weekDay.DayOfWeek);
 
-            string weekDate = weekDay.DayOfWeek.ToString(); //for choosing user input weekday
-            //var dayOfWeek = DateTime.Now.DayOfWeek.ToString(); //for printing week using datetime func
+            string weekDate = weekDay.DayOfWeek.ToString(); 
             switch (weekDate)
             {
                 case "Saturday": Console.WriteLine("\n" + "Color of the day is Red."); break;
