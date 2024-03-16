@@ -2,7 +2,7 @@ import speech_recognition as sr
 import pyttsx3
 import openai
 
-openai.api_key = "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"
+openai.api_key = "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 "ItIsTheAPIKey""
 
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')
