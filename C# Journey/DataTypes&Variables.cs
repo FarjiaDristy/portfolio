@@ -7,17 +7,17 @@ namespace DatatypeVariable
         {
             //#Practice 1
             int x = 1;
-            Console.WriteLine("The integer x is a number " +x);  // here plus is concatenation
+            Console.WriteLine("The integer x is a number " +x);
 
             x = 5;
             Console.WriteLine("The x is a number " +x);
 
-            double double_x = 0.06d; //can also name it double_num
+            double double_x = 0.06d;
             float float_x = 0.02f;
             decimal decimal_x = 101.9m;
             Console.WriteLine("double is " +double_x+ " float is " +float_x+ " decimal is " +decimal_x);
 
-            double_x = .125d; //when you write same variable with new value it overwrites the old one
+            double_x = .125d; //when you write same variable with new value it overwrites the old one = oldschool
             Console.WriteLine(decimal_x);
             Console.WriteLine(double_x);
             Console.WriteLine(float_x);
@@ -54,7 +54,7 @@ namespace DatatypeVariable
 
             //#Practice 4
             string X = "Dristy";
-            int Y = 23; // here = is not math's equal but assig or set value
+            int Y = 23; // here = is not math's equal but assign or set value
             Console.WriteLine("The number Y is " + Y ); // here + is concatanation
             Console.WriteLine(" Assalam Alaikum, I'm " + X + " and I'm " + Y); 
         }
