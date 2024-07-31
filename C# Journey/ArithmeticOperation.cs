@@ -48,7 +48,7 @@ namespace ArithmeticOperations
             mult = x * y;
             Console.WriteLine(x + " * " + y + " = " + mult);
 
-            div = (float)x / (float)y; // type casting the int x and y into float to get float value.
+            div = (float)x / (float)y;
             Console.WriteLine(x + " / " + y + " = " + div);
 
             rem = x % y;
