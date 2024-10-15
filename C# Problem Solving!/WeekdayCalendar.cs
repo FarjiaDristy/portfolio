@@ -5,7 +5,7 @@ namespace Assignment1
     class Program
     {
         static void Main(string[] args)
-        {
+        { 
             //make a weekday calendar by taking user input
             Console.WriteLine("Enter the day = ");
             var day = Console.ReadLine();
