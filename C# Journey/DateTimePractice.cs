@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DateTimeEx //not DateTime cause, class can't have same name
+namespace DateTimeEx //not DateTime cause, see below
 {
     class Program
     {
         static void Main(string[] args)
         {
             //WHY ISN'T IT (namespace DateTime) WORKING?????????????????? 
-            //Ans: if namespace name is same as varibale, object, name, object, or classname, it'll show error
+            //Ans: if namespace name is same as varibale, object, name, object, function, or classname, it'll show an error
             //Date Time datatype
             var date = new DateTime(); 
             Console.WriteLine(date);
