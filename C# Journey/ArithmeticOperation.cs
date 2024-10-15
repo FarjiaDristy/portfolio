@@ -6,7 +6,7 @@ namespace ArithmeticOperations
     {
         static void Main(string[] args)
         {
-            //+, -, *, /, % (addition, subtraction, multiplication, division, remainder)
+            //+, -, *, /, % (addition, subtraction, multiplication, division, remainder) 
             int a, b, c;
             a = 5; b = 10; c = 12;
             int addition = a + b;
