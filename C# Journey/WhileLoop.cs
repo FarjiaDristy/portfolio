@@ -26,12 +26,21 @@ namespace WhileLoop
             }
             Console.WriteLine("-----");
           
-            // noob style even number
+            // noob style even number using only increment
+            int x = 0;
+            while (x <= 10) 
+            {
+                Console.WriteLine(x + " is an even number.");
+                x +=2;
+            }
+            Console.WriteLine("-----");
+
+            //even numbers using condition
             int x = 0;
             while (x % 2 == 0 && x <= 10) 
             {
                 Console.WriteLine(x + " is an even number.");
-                x += 2;
+                x +=2;
             }
             Console.WriteLine("-----");
 
