@@ -6,6 +6,7 @@ namespace WhileLoop
         static void Main(string[] args)
         {
             Console.WriteLine("This is while loop.");
+            //syntax: initialize; while(condition) {statement1; statement2; increment;};
           
             //1, 2 ... 10
             int y = 0;
