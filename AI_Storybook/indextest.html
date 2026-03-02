@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enchanted Storybook AI</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@400;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Crimson Text', serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    .magical-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background:
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+      animation: float 20s ease-in-out infinite;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33% { transform: translateY(-20px) rotate(1deg); }
+      66% { transform: translateY(-10px) rotate(-1deg); }
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 768px) {
+      .container { grid-template-columns: 1fr; gap: 20px; }
+    }
+
+    .input-section, .story-section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 25px;
+      padding: 40px;
+      width: 600px;
+      height: 650px;
+      box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-section:hover, .story-section:hover {
+      transform: translateY(-5px);
+      box-shadow:
+        0 25px 50px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .title {
+      font-family: 'Dancing Script', cursive;
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 30px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: #666;
+      text-align: center;
+      margin-bottom: 30px;
+      font-style: italic;
+    }
+
+    .prompt-input {
+      width: 100%;
+      padding: 20px;
+      border: 2px solid #e1e8ed;
+      border-radius: 15px;
+      font-size: 1.1rem;
+      font-family: 'Crimson Text', serif;
+      background: rgba(255, 255, 255, 0.8);
+      min-height: 120px;
+      resize: vertical;
+      color: #333;
+      transition: all 0.3s ease;
+    }
+
+    .prompt-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+      background: rgba(255, 255, 255, 1);
+    }
+
+    .generate-btn {
+      width: 100%;
+      padding: 18px;
+      margin-top: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 15px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .generate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    .generate-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+    .story-header {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.5rem;
+      color: #667eea;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .story-pages { 
+      flex: 1; 
+      display: flex; 
+      width: 100%; 
+      height: 500px; 
+      overflow: hidden; 
+      position: relative;
+      perspective: 1000px;
+    }
+    .story-page { 
+      width: 100%; 
+      height: 100%; 
+      overflow: hidden;
+      padding: 20px; 
+      box-sizing: border-box;
+      cursor: pointer;
+      transition: transform 0.8s ease-in-out;
+      position: relative;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+      word-break: break-word; /* Add this line */
+    }
+    
+    .story-page:hover {
+      background: rgba(102, 126, 234, 0.02);
+    }
+    
+    .story-page.flipping-forward {
+      animation: flipForward 0.8s ease-in-out;
+    }
+    
+    .story-page.flipping-backward {
+      animation: flipBackward 0.8s ease-in-out;
+    }
+    
+    @keyframes flipForward {
+      0% { transform: rotateY(0deg); }
+      50% { transform: rotateY(-90deg); }
+      100% { transform: rotateY(0deg); }
+    }
+    
+    @keyframes flipBackward {
+      0% { transform: rotateY(0deg); }
+      50% { transform: rotateY(90deg); }
+      100% { transform: rotateY(0deg); }
+    }
+    
+    .story-page::after {
+      content: var(--click-hint, "Click → | Right-click ←");
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      font-size: 0.8rem;
+      color: #667eea;
+      opacity: 0.7;
+      font-style: italic;
+      transition: opacity 0.3s ease;
+    }
+    
+    .story-page:hover::after {
+      opacity: 1;
+    }
+    
+    .story-page.last-page {
+      cursor: default;
+    }
+    
+    .story-page.last-page:hover {
+      transform: none;
+      background: none;
+    }
+    
+    .story-page.last-page::after {
+      content: "The End | Right-click ←";
+      color: #764ba2;
+      font-weight: 600;
+    }
+    
+    .story-page.first-page::after {
+      content: "Click → to begin";
+      color: #667eea;
+    }
+
+    .story-page p { font-size: 1.2rem; line-height: 1.8; margin-bottom: 1rem; text-align: justify; color:#333; }
+    .story-page p:first-child::first-letter {
+      font-size: 4rem;
+      font-family: 'Dancing Script', cursive;
+      float: left; margin: 0 8px 0 0; color: #667eea;
+    }
+
+    .story-placeholder {
+      color: #999; font-style: italic; text-align: center;
+      padding: 60px 20px; font-size: 1.3rem;
+    }
+
+    .pagination-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 0;
+      gap: 15px;
+      position: absolute;
+      bottom: 30px;
+      left: 0;
+      width: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .story-section {
+      position: relative;
+    }
+    .pagination-controls span {
+      pointer-events: auto;
+      background: rgba(255,255,255,0.85);
+      padding: 6px 18px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(102,126,234,0.08);
+    }
+
+    .page-btn {
+      padding: 10px 18px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white; border: none; border-radius: 10px;
+      font-size: 1rem; cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .page-btn:hover { transform: translateY(-2px); }
+    .page-btn:disabled { opacity: 0.6; cursor: not-allowed; transform:none; }
+
+    .prompt-examples {
+      margin-top: 25px;
+      padding: 20px;
+      background: rgba(102, 126, 234, 0.05);
+      border-radius: 15px;
+      border-left: 4px solid #667eea;
+    }
+
+    .prompt-examples h4 {
+      color: #667eea;
+      margin-bottom: 10px;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.3rem;
+    }
+
+    .prompt-examples li {
+      list-style: none;
+      padding: 5px 0;
+      color: #666;
+      cursor: pointer;
+    }
+
+    .prompt-examples li:hover { color: #667eea; }
+    .prompt-examples li::before { content: "✨ "; margin-right: 5px; }
+
+    .error-message {
+      background: rgba(255, 107, 107, 0.1);
+      color: #ff6b6b;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+      border-left: 4px solid #ff6b6b;
+    }
+  </style>
+</head>
+<body>
+  <div class="magical-bg"></div>
+
+  <div class="container">
+    <div class="input-section">
+      <h1 class="title">Enchanted Storybook</h1>
+      <p class="subtitle">Where AI weaves tales of wonder</p>
+
+      <textarea id="promptInput" class="prompt-input"
+        placeholder="Enter your story prompt here..."></textarea>
+
+      <button id="generateBtn" class="generate-btn">✨ Weave My Story ✨</button>
+      <div id="errorMessage"></div>
+
+      <div class="prompt-examples">
+        <h4>Story Spark Ideas:</h4>
+        <ul>
+          <li onclick="fillPrompt('A dragon who runs a cozy bookstore in a mountain village')">A dragon who runs a cozy bookstore in a mountain village</li>
+          <li onclick="fillPrompt('Time-traveling baker discovers recipes from the future')">Time-traveling baker discovers recipes from the future</li>
+          <li onclick="fillPrompt('A lighthouse keeper who guides lost souls, not ships')">A lighthouse keeper who guides lost souls, not ships</li>
+          <li onclick="fillPrompt('Children discover their playground equipment comes alive at night')">Children discover their playground equipment comes alive at night</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="story-section">
+      <h2 class="story-header">Your Enchanted Tale</h2>
+      <div id="storyContent" class="story-content">
+        <div class="story-placeholder">
+          Your magical story will appear here once you provide a prompt and click "Weave My Story"
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    class StoryBookAgent {
+      constructor() {
+        this.apiKey = "AIzaSyA6wpvZv1Gopt4I_Emo9R9dLmfqhCe60Z4"; // testting the old ver
+        this.apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${this.apiKey}`;
+        this.initializeEventListeners();
+      }
+
+      initializeEventListeners() {
+        document.getElementById("generateBtn").addEventListener("click", () => this.generateStory());
+        
+        // Add keyboard navigation
+        document.addEventListener("keydown", (e) => {
+          if (this.pages && this.pages.length > 0) {
+            if (e.key === "ArrowRight" || e.key === " ") {
+              e.preventDefault();
+              if (this.currentPageIndex < this.pages.length - 1) {
+                this.flipToPage(this.currentPageIndex + 1, 'forward');
+              }
+            } else if (e.key === "ArrowLeft") {
+              e.preventDefault();
+              if (this.currentPageIndex > 0) {
+                this.flipToPage(this.currentPageIndex - 1, 'backward');
+              }
+            }
+          }
+        });
+      }
+
+      async generateStory() {
+        const prompt = document.getElementById("promptInput").value.trim();
+        const generateBtn = document.getElementById("generateBtn");
+        const storyContent = document.getElementById("storyContent");
+        const errorMessage = document.getElementById("errorMessage");
+
+        errorMessage.innerHTML = "";
+        if (!prompt) {
+          this.showError("Please enter a story idea!!!");
+          return;
+        }
+
+        generateBtn.disabled = true;
+        generateBtn.textContent = "✨ Weaving Magic...";
+
+        storyContent.innerHTML = `<div class="story-placeholder">Crafting your enchanted tale...</div>`;
+
+        try {
+          const enhancedPrompt = `Create a captivating, well-structured story based on this prompt: "${prompt}". 
+          Make it feel like a classic storybook tale, around 2000-3000 words.`;
+
+          const response = await fetch(this.apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: enhancedPrompt }] }],
+              generationConfig: { temperature: 0.8, maxOutputTokens: 4000 }
+            })
+          });
+
+          const data = await response.json();
+          const story = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+          
+          // Debug: Log story length and check for truncation
+          console.log("Story length:", story.length);
+          console.log("Story word count:", story.split(' ').length);
+          
+          if (story) {
+            // Check if story might be truncated
+            if (story.length > 0 && !story.endsWith('.') && !story.endsWith('!') && !story.endsWith('?')) {
+              console.warn("Story might be truncated - doesn't end with proper punctuation");
+            }
+            this.displayStory(story);
+          } else {
+            this.showError("No story returned from API!");
+          }
+        } catch (e) {
+          console.error("API Error:", e);
+          this.showError("Error generating story: " + e.message);
+        } finally {
+          generateBtn.disabled = false;
+          generateBtn.textContent = "✨ Weave My Story ✨";
+        }
+      }
+
+      displayStory(story) {
+        const paragraphs = story.split("\n").filter(p => p.trim());
+        
+        // Debug: Log paragraph count and content
+        console.log("Total paragraphs:", paragraphs.length);
+        console.log("First paragraph:", paragraphs[0]?.substring(0, 100) + "...");
+        console.log("Last paragraph:", paragraphs[paragraphs.length - 1]?.substring(0, 100) + "...");
+
+        // Create a hidden measuring container
+        const storyContent = document.getElementById("storyContent");
+        storyContent.innerHTML = `
+  <div class="story-section" style="position: absolute; left: -9999px; top: -9999px; visibility: hidden; width:600px; height:500px; padding:40px;">
+    <div class="story-pages" style="width:100%; height:500px;">
+      <div class="story-page" style="width:100%; height:100%;"></div>
+    </div>
+  </div>
+`;
+        
+        const storyPages = storyContent.querySelector('.story-pages');
+        const measuringPage = storyContent.querySelector('.story-page');
+        
+        // Get the actual available height for content
+        const maxHeight = storyPages.clientHeight;
+        console.log("Max height for pages:", maxHeight);
+        
+        // Process pages with accurate height measurement
+        this.processPages(paragraphs, maxHeight, measuringPage);
+      }
+
+      processPages(paragraphs, maxHeight, measuringPage) {
+        let pages = [];
+        let currentPageContent = [];
+
+        paragraphs.forEach(paragraph => {
+          // Test adding this paragraph to current page
+          const testPara = document.createElement("p");
+          testPara.textContent = paragraph.trim();
+          measuringPage.innerHTML = currentPageContent.map(p => `<p>${p}</p>`).join('') + testPara.outerHTML;
+
+          // Check if this would exceed the page height
+          if (measuringPage.scrollHeight > maxHeight) {
+            // Save current page if it has content
+            if (currentPageContent.length > 0) {
+              pages.push(currentPageContent.map(p => `<p>${p}</p>`).join(''));
+            }
+
+            // Start new page with current paragraph
+            currentPageContent = [paragraph.trim()];
+            
+            // Test if this single paragraph fits
+            measuringPage.innerHTML = `<p>${paragraph.trim()}</p>`;
+            if (measuringPage.scrollHeight > maxHeight) {
+              // Split the long paragraph
+              const splitParagraphs = this.splitLongParagraph(paragraph.trim(), maxHeight, measuringPage);
+              if (splitParagraphs.length > 0) {
+                // Add all but the last split to current page
+                currentPageContent = splitParagraphs.slice(0, -1);
+                // The last split becomes the start of next page
+                if (splitParagraphs.length > 1) {
+                  pages.push(currentPageContent.map(p => `<p>${p}</p>`).join(''));
+                  currentPageContent = [splitParagraphs[splitParagraphs.length - 1]];
+                }
+              }
+            }
+          } else {
+            // Paragraph fits, add it to current page
+            currentPageContent.push(paragraph.trim());
+          }
+        });
+
+        // Add the last page if it has content
+        if (currentPageContent.length > 0) {
+          pages.push(currentPageContent.map(p => `<p>${p}</p>`).join(''));
+        }
+
+        // Debug: Log page splitting results
+        console.log("Total pages created:", pages.length);
+        console.log("Total paragraphs processed:", paragraphs.length);
+        console.log("Paragraphs per page:", pages.map((page, i) => {
+          const paraCount = (page.match(/<p>/g) || []).length;
+          return `Page ${i+1}: ${paraCount} paragraphs`;
+        }));
+
+        this.pages = pages;
+        this.currentPageIndex = 0;
+        this.renderPage();
+      }
+
+      splitLongParagraph(paragraph, maxHeight, measuringPage) {
+        const words = paragraph.split(' ');
+        const splitParagraphs = [];
+        let currentText = '';
+
+        for (let i = 0; i < words.length; i++) {
+          const testText = currentText + (currentText ? ' ' : '') + words[i];
+          measuringPage.innerHTML = `<p>${testText}</p>`;
+          
+          if (measuringPage.scrollHeight > maxHeight && currentText.trim()) {
+            // Current text fits, but adding this word would overflow
+            splitParagraphs.push(currentText.trim());
+            currentText = words[i];
+          } else {
+            currentText = testText;
+          }
+        }
+        
+        // Add remaining text
+        if (currentText.trim()) {
+          splitParagraphs.push(currentText.trim());
+        }
+        
+        return splitParagraphs;
+      }
+
+
+      renderPage() {
+        const storyContent = document.getElementById("storyContent");
+        const page = this.pages[this.currentPageIndex];
+        const isLastPage = this.currentPageIndex === this.pages.length - 1;
+        const isFirstPage = this.currentPageIndex === 0;
+        
+        storyContent.innerHTML = `
+          <div class="story-pages">
+            <div class="story-page ${isLastPage ? 'last-page' : ''} ${isFirstPage ? 'first-page' : ''}" id="currentPage">${page}</div>
+          </div>
+          <div class="pagination-controls">
+            <span style="color:#667eea; font-weight:600;">Page ${this.currentPageIndex+1} of ${this.pages.length}</span>
+          </div>
+        `;
+        
+        // Add click functionality to flip pages
+        const currentPageElement = document.getElementById("currentPage");
+        currentPageElement.addEventListener("click", () => {
+          if (!isLastPage) {
+            this.flipToPage(this.currentPageIndex + 1, 'forward');
+          }
+        });
+        
+        // Add right-click for previous page
+        currentPageElement.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          if (!isFirstPage) {
+            this.flipToPage(this.currentPageIndex - 1, 'backward');
+          }
+        });
+      }
+
+      flipToPage(pageIndex, direction) {
+        const currentPageElement = document.getElementById("currentPage");
+        
+        // Add flip animation class
+        if (direction === 'forward') {
+          currentPageElement.classList.add('flipping-forward');
+        } else {
+          currentPageElement.classList.add('flipping-backward');
+        }
+        
+        // Wait for animation to complete, then change page
+        setTimeout(() => {
+          this.currentPageIndex = pageIndex;
+          this.renderPage();
+        }, 400); // Half of the animation duration
+      }
+
+      showError(msg) {
+        document.getElementById("errorMessage").innerHTML = `<div class="error-message">${msg}</div>`;
+      }
+    }
+
+    function fillPrompt(text) {
+      document.getElementById("promptInput").value = text;
+      document.getElementById("promptInput").focus();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => { new StoryBookAgent(); });
+  </script>
+</body>
+</html>
