@@ -4,6 +4,7 @@ class Program
     static void Main(string[] args)
     {
         StringInterpolation.Run();
+        StringFormatting.Run();
 
         Console.WriteLine("Hello, World!");
 
