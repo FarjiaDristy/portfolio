@@ -35,7 +35,17 @@ python app.py
 
 The server will start on `http://localhost:5000`
 
-### 5. Open the Frontend
+### 5. (Optional) Use Streamlit Instead of HTML
+
+You can replace the separate HTML frontend with a Streamlit app that bundles UI and backend together. After installing the dependencies (Streamlit is already in `requirements.txt`), run:
+
+```bash
+streamlit run streamlit_app.py
+```
+
+A browser window (usually at `http://localhost:8501`) will open. Enter a prompt and click **Weave My Story**; click the navigation buttons to move between pages.
+
+### 6. Open the Frontend
 
 Open `AIStorybook.html` in your browser or serve it with a local server:
 
