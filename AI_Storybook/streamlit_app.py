@@ -5,10 +5,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+print("streamlit_app imported")
+
 # API key is acquired inside main to avoid calling Streamlit APIs at module import
 
+API_URL = ""  # will be set once we know the key
 
 # split text into pages based on approximate height (simple paragraph splitting)
+
+
 def paginate_story(text, max_chars=1000):
     paragraphs = [p.strip() for p in text.split("\n") if p.strip()]
     pages = []
@@ -27,6 +32,9 @@ def paginate_story(text, max_chars=1000):
 def generate_story(prompt: str) -> str:
     prompt = prompt.strip()
     if not prompt:
+        return ""
+    if not API_URL:
+        st.error("Server configuration error: API_URL not set.")
         return ""
 
     enhanced_prompt = (
