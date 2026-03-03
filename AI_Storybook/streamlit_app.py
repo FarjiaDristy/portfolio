@@ -1,103 +1,86 @@
-import os
-import requests
-import streamlit as st
-from dotenv import load_dotenv
+# Enchanted Storybook AI
 
-load_dotenv()
+An interactive AI-powered storybook generator using Google's Gemini API.
 
-API_KEY = os.getenv("GEMINI_API_KEY")
-API_URL = (
-    f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={API_KEY}"
-)
+## Setup Instructions
 
+### 1. Clone the Repository
 
-# split text into pages based on approximate height (simple paragraph splitting)
-def paginate_story(text, max_chars=1000):
-    paragraphs = [p.strip() for p in text.split("\n") if p.strip()]
-    pages = []
-    current = ""
-    for p in paragraphs:
-        if len(current) + len(p) + 1 > max_chars:
-            pages.append(current)
-            current = p + "\n\n"
-        else:
-            current += p + "\n\n"
-    if current:
-        pages.append(current)
-    return pages
+```bash
+git clone <your-repo-url>
+cd <repo-folder>
+```
 
+### 2. Create a `.env` File
 
-def generate_story(prompt: str) -> str:
-    prompt = prompt.strip()
-    if not prompt:
-        return ""
+Create a `.env` file in the project root with your API key:
 
-    enhanced_prompt = (
-        f"Create a captivating, well-structured story based on this prompt: \"{prompt}\". "
-        "Make it feel like a classic storybook tale, around 2000-2200 words."
-    )
+```
+GEMINI_API_KEY=your_api_key_here
+```
 
-    try:
-        resp = requests.post(
-            API_URL,
-            json={
-                "contents": [{"parts": [{"text": enhanced_prompt}]}],
-                "generationConfig": {"temperature": 0.8, "maxOutputTokens": 4000},
-            },
-            timeout=15,
-        )
-    except requests.exceptions.Timeout:
-        st.error("Request timed out, please try again later.")
-        return ""
-    except requests.exceptions.RequestException as exc:
-        st.error(f"Request error: {exc}")
-        return ""
+**Important:** This file is in `.gitignore` and will NOT be pushed to GitHub.
 
-    if not resp.ok:
-        st.error(f"API returned {resp.status_code}")
-        return ""
-    data = resp.json()
-    story = (
-        data.get("candidates", [{}])[0]
-        .get("content", {})
-        .get("parts", [{}])[0]
-        .get("text", "")
-    )
-    return story.strip()
+### 3. Install Dependencies
 
+```bash
+pip install -r requirements.txt
+```
 
-def main():
-    st.set_page_config(page_title="Enchanted Storybook", layout="centered")
-    st.title("✨ Enchanted Storybook ✨")
-    st.write("_Where AI weaves tales of wonder_")
+### 4. Run the Backend
 
-    prompt = st.text_area("Enter your story idea", height=150)
+```bash
+python app.py
+```
 
-    if st.button("Weave My Story"):
-        if not prompt.strip():
-            st.warning("Please enter a prompt before generating.")
-        else:
-            with st.spinner("Crafting your enchanted tale..."):
-                story_text = generate_story(prompt)
-            if story_text:
-                pages = paginate_story(story_text)
-                if "page_index" not in st.session_state:
-                    st.session_state.page_index = 0
+The server will start on `http://localhost:5000`
 
-                def show_current_page():
-                    idx = st.session_state.page_index
-                    st.write(f"### Page {idx+1} of {len(pages)}")
-                    st.markdown(pages[idx])
+### 5. (Optional) Use Streamlit Instead of HTML
 
-                show_current_page()
-                col1, col2, col3 = st.columns([1, 2, 1])
-                if col1.button("← Previous") and st.session_state.page_index > 0:
-                    st.session_state.page_index -= 1
-                    show_current_page()
-                if col3.button("Next →") and st.session_state.page_index < len(pages) - 1:
-                    st.session_state.page_index += 1
-                    show_current_page()
+You can replace the separate HTML frontend with a Streamlit app that bundles UI and backend together. After installing the dependencies (Streamlit is already in `requirements.txt`), run:
 
+```bash
+streamlit run streamlit_app.py
+```
 
-if __name__ == "__main__":
-    main()
+A browser window (usually at `http://localhost:8501`) will open. Enter a prompt and click **Weave My Story**; click the navigation buttons to move between pages.
+
+**Deploying on Streamlit Cloud**
+
+1. Push your repository to GitHub.
+2. Go to https://streamlit.io/cloud and create a new app connected to the repo.
+3. In the app dashboard open **Secrets** and add:
+   ```
+   GEMINI_API_KEY="your_api_key_here"
+   ```
+   Streamlit makes these available via `st.secrets` automatically.
+4. If you get an "Internal server error" after deployment, check the logs—most often the key is missing or invalid. The app also displays an error message if the key isn't found.
+5. Look at the Logs tab for more details such as timeout or JSON parse errors.
+
+### 6. Open the Frontend
+
+Open `AIStorybook.html` in your browser or serve it with a local server:
+
+```bash
+# Using Python
+python -m http.server 8000
+
+# Then navigate to http://localhost:8000/AIStorybook.html
+```
+
+## Features
+
+- Generate unique stories with AI prompts
+- Beautiful page-flipping animation
+- Responsive design with magical background effects
+- Keyboard navigation (Arrow keys, Space, Right-click)
+
+## Deployment
+
+For production deployment, you'll need to host the backend server (Heroku, Railway, Render, etc.) and update the `apiUrl` in the HTML to point to your hosted backend URL.
+
+## Security
+
+- API keys are stored in `.env` and never committed to Git
+- The backend handles all API requests securely
+- CORS is enabled for frontend communication
