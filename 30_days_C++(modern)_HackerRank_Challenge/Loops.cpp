@@ -1,4 +1,3 @@
-#c++11, c++14, c++20
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -14,10 +13,9 @@ int main()
     getline(cin, n_temp);
 
     int n = stoi(ltrim(rtrim(n_temp)));
-    
+        cin >> n;
 
-    for(int i = 1; i <= 10; i++)
-    {
+    for (int i = 1; i <= 10; i++) {
         cout << n << " x " << i << " = " << n * i << endl;
     }
 
