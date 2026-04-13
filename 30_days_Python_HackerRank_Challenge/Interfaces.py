@@ -1,0 +1,43 @@
+#python-2
+class AdvancedArithmetic(object):
+    def divisorSum(n):
+        raise NotImplementedError
+
+class Calculator(AdvancedArithmetic):
+    def divisorSum(self, n):
+        pass
+class Calculator(AdvancedArithmetic):
+    def divisorSum(self, n):
+        sum = 0
+        for i in range(1, n+1):
+            if n % i == 0:
+                sum += i
+        return sum
+
+n = int(raw_input())
+my_calculator = Calculator()
+s = my_calculator.divisorSum(n)
+print("I implemented: " + type(my_calculator).__bases__[0].__name__)
+print(s)
+
+#python-3
+class AdvancedArithmetic(object):
+    def divisorSum(n):
+        raise NotImplementedError
+
+class Calculator(AdvancedArithmetic):
+    def divisorSum(self, n):
+        pass
+class Calculator(AdvancedArithmetic):
+    def divisorSum(self, n):
+        total = 0
+        for i in range(1, n+1):
+            if n % i == 0:
+                total += i
+        return total
+
+n = int(input())
+my_calculator = Calculator()
+s = my_calculator.divisorSum(n)
+print("I implemented: " + type(my_calculator).__bases__[0].__name__)
+print(s)
