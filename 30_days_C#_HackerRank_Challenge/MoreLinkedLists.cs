@@ -1,88 +1,71 @@
-#include <cstddef>
-#include <cmath>
-#include <cstdio>
-#include <vector>
-#include <iostream>
-#include <algorithm>
-using namespace std;	
+using System;
+using System.Collections.Generic;
 class Node
 {
-    public:
-        int data;
-        Node *next;
-        Node(int d){
-            data=d;
-            next=NULL;
-        }
-};
-class Solution{
-    public:
+	public int data;
+	public Node next;
+    public Node(int d){
+        data=d;
+        next=null;
+    }
+		
+}
+class Solution {
 
-          Node* removeDuplicates(Node *head) {
-    if (head == nullptr) return nullptr;
+  public static Node removeDuplicates(Node head){
+    if (head == null) return null;
     
-    Node* current = head;
+    Node current = head;
     
-    while (current->next != nullptr) {
-        if (current->data == current->next->data) {
-            // Found a duplicate: bypass it
-            Node* nextNode = current->next->next;
-            delete(current->next); // Optional but good practice for memory
-            current->next = nextNode;
+    while (current.next != null) {
+        if (current.data == current.next.data) {
+            current.next = current.next.next;
         } else {
-            // No duplicate: move to the next node
-            current = current->next;
+            current = current.next;
         }
     }
     return head;
 }
+  
 
-          Node* insert(Node *head,int data)
-          {
-               Node* p=new Node(data);
-               if(head==NULL){
-                   head=p;  
-
-               }
-               else if(head->next==NULL){
-                   head->next=p;
-
-               }
-               else{
-                   Node *start=head;
-                   while(start->next!=NULL){
-                       start=start->next;
-                   }
-                   start->next=p;   
-
-               }
-                    return head;
-                
-            
-          }
-          void display(Node *head)
-          {
-                  Node *start=head;
-                    while(start)
-                    {
-                        cout<<start->data<<" ";
-                        start=start->next;
-                    }
-           }
-};
-			
-int main()
-{
-	Node* head=NULL;
-  	Solution mylist;
-    int T,data;
-    cin>>T;
-    while(T-->0){
-        cin>>data;
-        head=mylist.insert(head,data);
-    }	
-    head=mylist.removeDuplicates(head);
-
-	mylist.display(head);
+	public static  Node insert(Node head,int data)
+	{
+        Node p=new Node(data);
 		
+		
+		if(head==null)
+			head=p;
+		else if(head.next==null)
+			head.next=p;
+		else
+		{
+			Node start=head;
+			while(start.next!=null)
+				start=start.next;
+			start.next=p;
+			
+		}
+		return head;
+    }
+	public static void display(Node head)
+	{
+		Node start=head;
+		while(start!=null)
+		{
+			Console.Write(start.data+" ");
+			start=start.next;
+		}
+	}
+    static void Main(String[] args) {
+	
+		Node head=null;
+        int T=Int32.Parse(Console.ReadLine());
+        while(T-->0){
+            int data=Int32.Parse(Console.ReadLine());
+            head=insert(head,data);
+        }
+      	head=removeDuplicates(head);
+		display(head);
+	}
 }
+	
